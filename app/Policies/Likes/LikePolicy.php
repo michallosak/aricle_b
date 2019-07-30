@@ -20,10 +20,6 @@ class LikePolicy
         //
     }
 
-    public function update(User $user, Like $like){
-        return $user->id === $like->user_id;
-    }
-
     public function destroy(User $user, Like $like){
         return $user->id === $like->user_id;
     }

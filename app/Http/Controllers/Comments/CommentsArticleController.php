@@ -13,7 +13,7 @@ class CommentsArticleController extends Controller
 {
     public function index($id)
     {
-        $comments = Comment::with(['user', 'answers'])
+        $comments = Comment::with(['user', 'answers', 'likesU', 'likesD'])
             ->where(['commentable_id' => $id, 'commentable_type' => 'ARTICLE'])
             ->orderBy('id', 'DESC')
             ->paginate(15);

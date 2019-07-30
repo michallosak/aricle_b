@@ -32,9 +32,6 @@ class AnswersCommentController extends Controller
     public function destroy(Reply $reply)
     {
         $reply->delete();
-        return response()->json([
-            'error' => false,
-            'msg' => 'Reply comment deleted!'
-        ], 200);
+        return true;
     }
 }

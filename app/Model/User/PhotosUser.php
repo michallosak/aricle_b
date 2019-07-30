@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class PhotosUser extends Model
 {
     protected $fillable = [
-        'user_id', 'src', 'type'
+        'user_id', 'href', 'type'
     ];
 
     public function user(){

@@ -16,7 +16,7 @@ class CreatePhotosUsersTable extends Migration
         Schema::create('photos_users', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('user_id');
-            $table->string('src');
+            $table->string('href');
             $table->string('type');
             $table->timestamps();
         });

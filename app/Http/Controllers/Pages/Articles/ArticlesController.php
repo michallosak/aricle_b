@@ -72,7 +72,7 @@ class ArticlesController extends Controller
 
     public function view($id)
     {
-        $article = Article::with(['user', 'tags', 'follows', 'likes', 'categories'])
+        $article = Article::with(['user.avatar', 'tags', 'follows', 'likesU', 'likesD', 'categories'])
             ->where(['id' => $id, 'status' => 1])
             ->first();
         return new ArticlesResource($article);
@@ -96,5 +96,13 @@ class ArticlesController extends Controller
             'error' => false,
             'msg' => 'Article deleted!'
         ], 200);
+    }
+
+    public function articlesInCategory($id){
+        $articles = Article::with(['categories'])
+        ->where(['category_id' => $id, 'status' => 1])
+            ->orderBy('id', 'DESC')
+            ->paginate(20);
+        return ArticlesResource::collection($articles);
     }
 }

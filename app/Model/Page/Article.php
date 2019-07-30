@@ -21,7 +21,8 @@ class Article extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class)
+            ->with(['specific']);
     }
 
     public function tags()
@@ -42,10 +43,17 @@ class Article extends Model
             ->where('followable_type', 'ARTICLE');
     }
 
-    public function likes()
+    //likes up
+    public function likesU()
     {
         return $this->hasMany(Like::class, 'likeable_id', 'id')
-            ->where('likeable_type', 'ARTICLE');
+            ->where(['likeable_type' => 'ARTICLE', 'like' => 1]);
+    }
+
+    //likes down
+    public function likesD(){
+        return $this->hasMany(Like::class, 'likeable_id', 'id')
+            ->where(['likeable_type' => 'ARTICLE', 'like' => 0]);
     }
 
     public function categories(){

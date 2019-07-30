@@ -8,10 +8,12 @@ use App\Model\Comment\Reply;
 use App\Model\Follow\Follow;
 use App\Model\Page\Article;
 use App\Model\Privacy\Privacy;
+use App\Model\User\AdditionalInformation;
 use App\Model\User\PhotosUser;
 use App\Model\User\SpecificData;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
@@ -59,23 +61,40 @@ class User extends Authenticatable
         return $this->hasMany(Article::class);
     }
 
-    public function comments(){
+    public function comments()
+    {
         return $this->hasMany(Comment::class);
     }
 
-    public function answersComment(){
+    public function answersComment()
+    {
         return $this->hasMany(Reply::class);
     }
 
-    public function follows(){
+    public function follows()
+    {
         return $this->hasMany(Follow::class);
     }
 
-    public function categories(){
+    public function categories()
+    {
         return $this->hasMany(Category::class);
     }
 
-    public function privacy(){
+    public function privacy()
+    {
         return $this->hasOne(Privacy::class);
+    }
+
+    public function inf()
+    {
+        return $this->hasOne(AdditionalInformation::class);
+    }
+
+    public function getFullName(){
+        $name = SpecificData::where('user_id', Auth::id())->value('name');
+        $last_name = SpecificData::where('user_id', Auth::id())->value('last_name');
+        $fullName = $name . ' ' . $last_name;
+        return $fullName;
     }
 }

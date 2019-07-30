@@ -17,7 +17,6 @@ class LikesController extends Controller
         ];
         $like = new Like();
         $like->setLike($data);
-
         return 'Like added!';
     }
 

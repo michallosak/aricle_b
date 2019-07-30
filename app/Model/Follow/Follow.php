@@ -2,6 +2,7 @@
 
 namespace App\Model\Follow;
 
+use App\Model\Page\Article;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -30,11 +31,19 @@ class Follow extends Model
 
             return 'Follow deleted!';
         } else {
-            Follow::create([
-                'user_id' => Auth::id(),
-                'followable_id' => $data['followable_id'],
-                'followable_type' => $data['followable_type']
-            ]);
+           $this->set($data);
         }
+    }
+
+    public function articles(){
+        return $this->belongsTo(Article::class, 'followable_id', 'id')
+            ->with(['user.specific', 'categories'])->where('status', 1);
+    }
+    private function set($data){
+        Follow::create([
+            'user_id' => Auth::id(),
+            'followable_id' => $data['followable_id'],
+            'followable_type' => $data['followable_type']
+        ]);
     }
 }

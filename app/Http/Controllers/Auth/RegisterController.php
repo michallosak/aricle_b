@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Controllers\Controller;
 use App\Model\Privacy\Privacy;
+use App\Model\User\AdditionalInformation;
 use App\Model\User\PhotosUser;
 use App\Model\User\SpecificData;
 use App\Model\Verify\VerifyEmail;
@@ -50,11 +51,13 @@ class RegisterController extends Controller
             Privacy::create([
                 'user_id' => $user->id
             ]);
-            $name = $specific->name;
+            AdditionalInformation::create([
+                'user_id' => $user->id
+            ]);
+            $name = $specific->name . ' ' . $specific->last_name;
             $email = $user->email;
             $verify = new VerifyEmail();
-            $verify->setVerifyKey($user->id);
-            $verify->sendEmailVerify($user->id, $email, $name);
+            $verify->setKey($user->id, $name, $email);
         });
         return response()->json([
             'error' => false,

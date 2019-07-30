@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Friends;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Friends\CreateFriendRequest;
-use App\Http\Requests\Friends\EditFriendRequest;
 use App\Http\Resources\Friends\FriendsResource;
 use App\Model\Friend\Friend;
 use Illuminate\Support\Facades\Auth;
@@ -12,11 +10,11 @@ use Illuminate\Support\Facades\Auth;
 class FriendsController extends Controller
 {
     // SEND INVITATION
-    public function sendInvitation(CreateFriendRequest $r)
+    public function sendInvitation($id)
     {
         Friend::create([
             'user_id' => Auth::id(),
-            'friend_id' => $r->friend_id
+            'friend_id' => $id
         ]);
         return response()->json([
             'error' => false,
@@ -27,7 +25,7 @@ class FriendsController extends Controller
     // SENT INVITATIONS
     public function sentInvitations()
     {
-        $sentInvitations = Friend::with(['user'])
+        $sentInvitations = Friend::with(['user.avatar', 'user.specific'])
             ->where(['user_id' => Auth::id(), 'status' => 1])
             ->orderBy('id', 'DESC')
             ->paginate(20);
@@ -35,18 +33,17 @@ class FriendsController extends Controller
     }
 
     // ACCEPT INVITATION
-    public function acceptInvitation(EditFriendRequest $r, Friend $friend)
+    public function acceptInvitation()
     {
-        $friend->update($r->only([
-            'status' => 2 // accept invitation
-        ]));
-        return new FriendsResource($friend);
+        Friend::where(['friend_id' => Auth::id()])
+            ->update(['status' => 2]);
+        return true;
     }
 
     // WAITING INVITATIONS
     public function waitingInvitations()
     {
-        $waitingInvitations = Friend::with(['friend'])
+        $waitingInvitations = Friend::with(['user.avatar', 'user.specific'])
             ->where(['friend_id' => Auth::id(), 'status' => 1])
             ->orderBy('id', 'DESC')
             ->paginate(20);
@@ -57,8 +54,15 @@ class FriendsController extends Controller
     public function friends()
     {
         $friends = Friend::with(['user', 'friend'])
+            ->where(['user_id' => Auth::id(), 'status' => 2])
+            ->orWhere(['friend_id' => Auth::id(), 'status' => 2])
             ->orderBy('id', 'DESC')
             ->paginate(20);
         return FriendsResource::collection($friends);
+    }
+
+    //DELETE FRIEND
+    public function destroy(Friend $friend){
+        $friend->delete();
     }
 }
